@@ -141,8 +141,9 @@ chrome.notifications.onButtonClicked.addListener((notifId, btnIdx) => {
   }
 });
 
+
 // Listen for tab activation events
-chrome.tabs.onActivated.addListener(function(activeInfo) {
+chrome.tabs.onActivated.addListener(function(activeInfo) { 
   // activeInfo contains information about the newly active tab
   console.log("Tab activated:", activeInfo.tabId);
 

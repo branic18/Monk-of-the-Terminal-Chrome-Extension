@@ -5,3 +5,4 @@ chrome.runtime.onMessage.addListener((msg) => {
     audio.play();
   }
 });
+
