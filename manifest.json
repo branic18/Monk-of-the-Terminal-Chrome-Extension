@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Test Extension",
+  "description": "Monk of the Terminal is a cyberpunk-inspired Pomodoro browser extension designed to cultivate deep focus and disciplined work habits. It tracks tab activity, session timing, and digital order while dynamically updating skill stats. Users receive AI-generated insights through their Future Twin, helping visualize their growth in real time as they progress through focused work sessions.",
+  "version": "1.0",
+  "permissions": [
+    "alarms",
+    "notifications",
+    "offscreen",
+    "tabs",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "hello.html",
+    "default_icon": "Snowflake-icon.jpg"
+  },
+  "background": {
+  "service_worker": "background-script.js",
+  "type": "module"
+  },
+  "web_accessible_resources": [{
+  "resources": ["gong-sound-effect.mp3"],
+  "matches": ["<all_urls>"]
+  }],
+  "icons": {
+    "128": "Snowflake-icon.jpg"
+  }
+}
