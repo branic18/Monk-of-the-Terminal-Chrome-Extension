@@ -63,6 +63,21 @@ let orderStat = 0
 let noiseCategory
 let completePair = [] // Track work/break pairs across sessions
 let lastWasBreakWithoutWork = false // Track if last session was a break without preceding work
+let sessionCount = 0 // Track complete pairs in current session
+
+// Load accumulated stats from storage when service worker starts
+chrome.storage.local.get(['Stillness', 'Discipline', 'Order', 'SessionCount'], function(result) {
+  stillnessStat = parseInt(result.Stillness) || 0;
+  disciplineStat = parseInt(result.Discipline) || 0;
+  orderStat = parseInt(result.Order) || 0;
+  sessionCount = parseInt(result.SessionCount) || 0;
+  console.log('Loaded stats from storage:', {
+    Stillness: stillnessStat,
+    Discipline: disciplineStat,
+    Order: orderStat,
+    SessionCount: sessionCount
+  });
+});
 
 // --- NOTIFICATION EVENT LISTENERS --- These listeners must NOT be inside any function. They need to live at global scope so the service worker can attach them.
 // chrome.notifications.onShown.addListener((id) => {
@@ -143,7 +158,7 @@ chrome.notifications.onButtonClicked.addListener((notifId, btnIdx) => {
 
 
 // Listen for tab activation events
-chrome.tabs.onActivated.addListener(function(activeInfo) { 
+chrome.tabs.onActivated.addListener(function(activeInfo) {
   // activeInfo contains information about the newly active tab
   console.log("Tab activated:", activeInfo.tabId);
 
@@ -224,6 +239,13 @@ function tick() {
     chrome.action.setBadgeText({ text: '' });
     chrome.runtime.sendMessage({ type: 'SESSION_COMPLETE', break: isBreak });
 
+    // Log initial state when session completes
+    console.log(`========================================`)
+    console.log(`SESSION COMPLETED: ${isBreak ? 'BREAK' : 'WORK'}`)
+    console.log(`Initial sessionCount: ${sessionCount}`)
+    console.log(`Initial completePair array: ${JSON.stringify(completePair)}`)
+    console.log(`========================================`)
+
     // Capture tab switch count before resetting (needed for async callback)
     const currentTabSwitchCount = tabSwitchCount;
     
@@ -245,16 +267,29 @@ function tick() {
     console.log(`Tab switch count reset to: ${tabSwitchCount}`)
 
     // Handle Discipline stat based on work/break pairs
+    // Note: sessionCount accumulates and is only incremented when a complete pair happens
+    // IMPORTANT: This function should ONLY be called when isBreak == true (break session completed)
     function completePairCheck() {
+        console.log(`DEBUG: completePairCheck() called - this should ONLY happen when break completes`)
         // Count work and break pairs in the array
         const workCount = completePair.filter(item => item === 'workPair').length;
         const breakCount = completePair.filter(item => item === 'breakPair').length;
         
         if (workCount >= 1 && breakCount >= 1) {
             // Complete pair: work + break
+            // This should ONLY happen when a break completes (isBreak == true)
             disciplineStat += 2
             console.log(`Added 2 to discipline: ${disciplineStat}`)
             console.log(`Pair completed: --${completePair}-- the user gains Discipline +2`)
+            
+            // CRITICAL: Only increment sessionCount ONCE per complete pair detection
+            // This function should ONLY be called when isBreak == true
+            const previousSessionCount = sessionCount;
+            sessionCount += 1
+            console.log(`Session count increased from ${previousSessionCount} to ${sessionCount}`)
+            console.log(`DEBUG: workCount=${workCount}, breakCount=${breakCount}, completePair=${JSON.stringify(completePair)}`)
+            console.log(`DEBUG: This completePairCheck was called because a BREAK session completed`)
+            
             completePair = [] // Reset after break
             lastWasBreakWithoutWork = false // Reset flag
             console.log(`Complete pair reset to: --${completePair}`)
@@ -303,11 +338,15 @@ function tick() {
     }
 
     if (isBreak == true) {
-        // Break session completed
+        // Break session completed - ONLY check for complete pairs when break completes
+        console.log(`DEBUG: Break completed. Array before push: ${JSON.stringify(completePair)}`)
         completePair.push('breakPair')
+        console.log(`DEBUG: Array after push: ${JSON.stringify(completePair)}`)
+        // ONLY call completePairCheck when break completes - this is the only place sessionCount should increment
         completePairCheck() // Check and reset after break
     } else {
         // Work session completed
+        // IMPORTANT: Do NOT call completePairCheck() here - sessionCount should ONLY increment after break completes
         // Reset flag since work started (breaks are no longer consecutive)
         lastWasBreakWithoutWork = false
         
@@ -323,6 +362,8 @@ function tick() {
         }
         // Add current work session to pair
         completePair.push('workPair')
+        console.log(`DEBUG: Work completed. Array after push: ${JSON.stringify(completePair)}`)
+        console.log(`DEBUG: sessionCount is ${sessionCount} (should NOT change until break completes)`)
         // Don't check yet - wait for break to complete the pair
     }
 
@@ -348,25 +389,43 @@ function tick() {
         }
 
         // Log all stats after async operation completes
-        console.log(`Current stillness: ${stillnessStat}`)
-        console.log(`Current discipline: ${disciplineStat}`)
-        console.log(`Current order: ${orderStat}`)
+        console.log("These will be saved to the local machine:")
+    console.log(`Current stillness: ${stillnessStat}`)
+    console.log(`Current discipline: ${disciplineStat}`)
+    console.log(`Current order: ${orderStat}`)
         console.log(`Current switch count: ${currentTabSwitchCount}`)
-        console.log(`Current tab count: ${tabCount}`)
-        console.log(`Current noise category: ${noiseCategory}`)
+    console.log(`Current tab count: ${tabCount}`)
+    console.log(`Current noise category: ${noiseCategory}`)
+        console.log(`Current session count: ${sessionCount}`)
 
-        // chrome.storage.local.set({
-        //   Stillness : stillnessStat,
-        //   Discipline: disciplineStat,
-        //   Order: orderStat,
-        //   Switches: currentTabSwitchCount,
-        //   Tabs: tabCount,
-        //   Noise: noiseCategory
-        // }).then(() => {
-        //   console.log('Saved to local database');
-        // });
+        let numberToAdd = 5;
 
-        // ALSO STORE: FUTURE TWIN MESSAGES FROM INFERENCE, LLM PROMPT, TOTAL SESSION COUNT TO TRIGGER FUTURE TWIN
+        // Save current accumulated stats directly (they already include all previous values)
+        // Each session only modifies stats by the delta (+2/-2 for order, +1/-1 for stillness, etc.)
+        console.log(`--------->DEBUG: Saving orderStat: ${orderStat} (accumulated value)`);
+        
+        chrome.storage.local.set({
+            'Stillness': stillnessStat,
+            'Discipline': disciplineStat,
+            'Order': orderStat,
+            'SessionCount': sessionCount
+        }, function() {
+            console.log('Stillness saved to database:', stillnessStat);
+            console.log('Discipline saved to database:', disciplineStat);
+            console.log('Order saved to database:', orderStat);
+            console.log('Session count saved to database:', sessionCount);
+            // Stats persist and accumulate - no reset needed
+        });
+
+        chrome.storage.local.set({
+          Tabs: tabCount,
+          Switches: currentTabSwitchCount,
+          Noise: noiseCategory
+        }).then(() => {
+          console.log('Saved tab count, tab switch count, and noise to local database');
+        });
+
+    // ALSO STORE: FUTURE TWIN MESSAGES FROM INFERENCE, LLM PROMPT, TOTAL SESSION COUNT TO TRIGGER FUTURE TWIN
     });
 
     return;
@@ -428,3 +487,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       console.warn('Unknown message type:', msg.type);
   }
 });
+
+
+// WHATS CURRENTLY IN THE DATABASE
+
+chrome.storage.local.get(['Stillness', 'Discipline', 'Order', 'Switches', 'Tabs', 'Noise', 'Sessions'], function(result) {
+  console.log('Current stillness:', result.Stillness);
+  console.log('Current discipline:', result.Discipline);
+  console.log('Current order:', result.Order);
+  console.log('Current switches:', result.Switches);
+  console.log('Current tab count:', result.Tabs);
+  console.log('Current noise:', result.Noise);
+  console.log('Current sessions:', result.Sessions);
+});
+
+// Note: DOM manipulation code has been moved to popup.js
+// Background scripts (service workers) don't have access to the DOM

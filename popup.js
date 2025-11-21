@@ -68,3 +68,55 @@ function formatTime(seconds) {
   return `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
 }
 
+// Load and display stats from storage when popup opens
+function loadStatsFromStorage() {
+  chrome.storage.local.get(['Stillness', 'Discipline', 'Order', 'Switches', 'Tabs', 'Noise', 'Sessions'], function(data) {
+    console.log('data retrieved:', data);
+    console.log('stillness retrieved:', data.Stillness);
+
+    if (data.Stillness !== undefined && data.Stillness !== null) {
+      const element = document.getElementById('stillnessStat');
+      if (element) element.textContent = data.Stillness;
+    } 
+
+    if (data.Discipline !== undefined && data.Discipline !== null) {
+      const element = document.getElementById('disciplineStat');
+      if (element) element.textContent = data.Discipline;
+    }
+
+    if (data.Order !== undefined && data.Order !== null) {
+      const element = document.getElementById('orderStat');
+      if (element) element.textContent = data.Order;
+    }
+
+    if (data.Switches !== undefined && data.Switches !== null) {
+      // Note: switchesStat uses class, not id in HTML
+      const elements = document.getElementsByClassName('switchesStat');
+      if (elements.length > 0) elements[0].textContent = data.Switches;
+    }
+
+    if (data.Tabs !== undefined && data.Tabs !== null) {
+      // Note: tabCountStat uses class, not id in HTML
+      const elements = document.getElementsByClassName('tabCountStat');
+      if (elements.length > 0) elements[0].textContent = data.Tabs;
+    }
+
+    if (data.Noise !== undefined && data.Noise !== null) {
+      // Note: noiseCategory uses class, not id in HTML
+      const elements = document.getElementsByClassName('noiseCategory');
+      if (elements.length > 0) elements[0].textContent = data.Noise;
+    }
+  });
+}
+
+// Load stats when popup opens
+loadStatsFromStorage();
+
+// Also listen for storage changes to update the UI in real-time
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === 'local') {
+    console.log('Storage changed, updating UI');
+    loadStatsFromStorage();
+  }
+});
+
