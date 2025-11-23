@@ -398,8 +398,6 @@ function tick() {
     console.log(`Current noise category: ${noiseCategory}`)
         console.log(`Current session count: ${sessionCount}`)
 
-        let numberToAdd = 5;
-
         // Save current accumulated stats directly (they already include all previous values)
         // Each session only modifies stats by the delta (+2/-2 for order, +1/-1 for stillness, etc.)
         console.log(`--------->DEBUG: Saving orderStat: ${orderStat} (accumulated value)`);
