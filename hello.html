@@ -16,9 +16,9 @@
     <link rel="stylesheet" href="popup.css">
 </head> 
 <body>
-    <h1>Monk of the Terminal</h1>
+    <img src="Extension-Stylized-Title.png" class="stylized-title">
     <section class="skill-stats">
-      <ul>
+      <ul class="stat-container">
         <li>Stillness <span id="stillnessStat"></span></li>
         <li>Discipline <span id="disciplineStat"></span></li>
         <li>Order <span id="orderStat"></span></li>
@@ -26,19 +26,17 @@
     </section>
   
     <section>
-      <div class="action-stats">
+      <div class="action-stats-container">
         <h2>POMODORO</h2>
         <div class="action-wrap"><p>Tabs: <span class="tabCountStat"></span></p></div>
         <div class="action-wrap"><p>Switches: <span class="switchesStat"></span></p></div>
         <div class="action-wrap"><p>Noise: <span class="noiseCategory"></span></p></div>
       </div>
     
-    <div class="timer">
+    <div class="timer-container">
       <p><div id="timer-display">25:00</div> minutes remaining</p>
       <button><span class="material-symbols-outlined" id="play">play_circle</span></button>
       <button><span class="material-symbols-outlined" id="skip">skip_next</span></button>
-<!--       <button id="playButton">Play</button>
-      <button id="skipButton">Skip</button> -->
     </div>
       
     </section>

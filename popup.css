@@ -1,0 +1,101 @@
+* {
+  font-family: 'Roboto-Mono', monospace;
+  color: #fffeee;
+}
+
+.stylized-title {
+    padding: 0px 0px 0px 7px;
+}
+
+html {
+    height: 300px;
+    width: 450px;
+    border-radius: 15px;
+    background-image: url("Background-image.png");
+}
+
+body {
+    margin: 0px;
+    padding: 15px;
+}
+
+/*STAT CONTAINER*/
+.stat-container {
+    list-style-type: none;
+    font-size: 18px;
+    margin: 10px 0px 10px 0px;
+    padding: 0px 0px 0px 10px;
+}
+
+/* STAT CONTAINER ELEMENTS*/
+/*TOP*/
+.stat-container li {
+    border-top: 1px solid #BBE7EB;
+    border-right: transparent;
+    border-left: transparent;
+    width: 150px;
+    padding: 5px 0px 5px 0px;
+}
+
+/*MIDDLE*/
+.stat-container li + li {
+    border-top: 1px solid #BBE7EB;
+    border-right: transparent;
+    /* border-bottom: 1px solid #BBE7EB; */
+    border-left: transparent;
+    width: 150px;
+    padding: 5px 0px 5px 0px;
+}
+
+/*LAST*/
+.stat-container li + li + li {
+    border-right: transparent;
+    border-bottom: 1px solid #BBE7EB;
+    border-left: transparent;
+    width: 150px;
+    padding: 5px 0px 5px 0px;
+}
+
+#stillnessStat, #disciplineStat, #orderStat {
+    font-size: 22px;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.action-stats-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+/*the container around the words*/
+.action-wrap {
+    background-color: black;
+    border-radius: 6px;
+    height: fit-content;
+}
+
+/* the actual words*/
+.action-wrap p {
+    margin: 0px;
+    padding: 7px;
+}
+
+.timer-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    color: #fffeee;
+    background: #285F6E;
+    border-radius: 15px;
+    font-size: 23px;
+}
+
+button {
+    color: #fffeee;
+    background-color: transparent;
+    border: none
+}
