@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <title>❄️ Focus Protocol</title>
+    <style>
+        * {
+        font-family: 'Roboto-Mono', monospace;
+        color: #fffeee;
+        }
+        body {
+            background-image: url('/Onboarding1.png');
+            background-repeat: no-repeat; /* Prevents the image from repeating */
+            /* background-position: center center; Centers the image horizontally and vertically */
+            background-size: cover; /* Scales the image to cover the entire element */
+            background-attachment: fixed; /* Keeps the background fixed while scrolling */
+            height: 100vh; /* Ensures the body takes up the full viewport height */
+            margin: 0;
+            padding: 50px;
+        }
+        p {
+            width: 50%;
+            line-height: 1.8;
+            margin-bottom: 7%;
+        }
+        img {
+            width: 50%;
+            margin-bottom: 2%;
+        }
+        .pinCheck, .volumeCheck {
+            border: solid 1px #fffeee;
+            padding: 20px;
+            border-radius: 10px;
+            padding: 10px;
+            width: 60%;
+            margin: 15px 0px 15px 0px;
+        }
+        button {
+            color: black;
+            background-color: #7E7E7E;
+            border-radius: 30px;
+            border: none;
+            padding: 10px 25px 10px 25px;
+            font-size: 16px;
+            margin-top: 25px;
+        }
+        button:active {
+            color: black;
+            background-color: #fffeee;
+            border-radius: 30px;
+        }
+        button:hover {
+            cursor: pointer;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <img src="Title.png" alt="Winter Arc">
+    <p>Welcome to the Frozen Terminal, wanderer. <br> From this moment on, every focused minute, every tab you resist, and every clean workspace you maintain strengthens your Monk’s skills in Stillness, Precision, and Order. As you work, the system watches your patterns and feeds them into your AI-generated Future Twin — a projected echo of who you could become if discipline becomes your code. Step in, clear the noise, and begin your ascent through the neon silence.</p>
+
+    <div class="checkboxes">
+        <div class="pinCheck">
+            <input type="checkbox" id="pinExtension" name="pinExtension" value="checked">
+            <label for="pinExtension">Pin the extension to your toolbar — keep the timer in sight as you work the neon grid.</label>
+        </div>
+
+        <div class="volumeCheck">
+            <input type="checkbox" id="myVolume" name="myVolume" value="checked">
+            <label for="myVolume">Turn up your volume to hear effects</label>
+        </div>
+    </div>
+
+    <button> -> Proceed</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
