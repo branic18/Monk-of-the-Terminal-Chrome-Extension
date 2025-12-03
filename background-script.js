@@ -1,34 +1,8 @@
-////////// PLAY BUTTON
-
-// ---- FOCUS SESSION
-// Create an alarm named "pomodoro" with a 25-minute delay.
-// chrome.alarms.create("focus-session", {
-//   delayInMinutes: 25.0
-// });
-
-// // Add a listener for when the alarm triggers.
-// chrome.alarms.onAlarm.addListener((alarm) => {
-//   if (alarm.name === "focus-session") {
-//     // Action to perform when the alarm fires, e.g., show a notification.
-//     console.log("25-minute timer finished!");
-//   }
-// });
-
-// ----- BREAK TIMER
-
-
-
-
-
-
-////////// SKIP BUTTON
-
-
-
-
-
-
-
+    chrome.runtime.onInstalled.addListener(({ reason }) => {
+      if (reason === 'install') {
+        chrome.tabs.create({ url: "onboarding.html" }); // Or any URL you want to open
+      }
+    });
 
 
 
